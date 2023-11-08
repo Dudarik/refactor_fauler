@@ -1,4 +1,4 @@
-import { IInvoice, IPerfomance, IPlay, IPlays } from '../interfaces';
+import { IInvoice, IPerfomance, IPlays } from '../interfaces';
 
 export function statement(invoice: IInvoice, plays: IPlays) {
   let totalAmount = 0;
@@ -13,15 +13,14 @@ export function statement(invoice: IInvoice, plays: IPlays) {
   }).format;
 
   for (const perf of invoice.perfomances) {
-    const play = plays[perf.playID];
-
-    const thisAmount = amountFor(perf, play);
+    const thisAmount = amountFor(perf);
 
     volumeCredits += Math.max(perf.audience - 30, 0);
 
-    if ('comedy' === play.type) volumeCredits += Math.floor(perf.audience / 5);
+    if ('comedy' === playFor(perf).type)
+      volumeCredits += Math.floor(perf.audience / 5);
 
-    result += ` ${play.name}: ${format(thisAmount / 100)}`;
+    result += ` ${playFor(perf).name}: ${format(thisAmount / 100)}`;
     result += ` (${perf.audience} seats)\n`;
     totalAmount += thisAmount;
   }
@@ -29,10 +28,10 @@ export function statement(invoice: IInvoice, plays: IPlays) {
   result += `You erned ${volumeCredits}\n`;
   return result;
 
-  function amountFor(aPerfomance: IPerfomance, play: IPlay) {
+  function amountFor(aPerfomance: IPerfomance) {
     let result = 0;
 
-    switch (play.type) {
+    switch (playFor(aPerfomance).type) {
       case 'tragedy':
         result = 40000;
 
@@ -52,9 +51,13 @@ export function statement(invoice: IInvoice, plays: IPlays) {
         break;
 
       default:
-        throw new Error(`Uncnown type: ${play.type}`);
+        throw new Error(`Uncnown type: ${playFor(aPerfomance).type}`);
     }
 
     return result;
+  }
+
+  function playFor(aPerfomance: IPerfomance) {
+    return plays[aPerfomance.playID];
   }
 }
