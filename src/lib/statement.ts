@@ -33,7 +33,7 @@ export function statement(invoice: IInvoice, plays: IPlays) {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 2,
-    }).format(aNumber);
+    }).format(aNumber / 100);
   }
 
   function volumeCreditsFor(aPerfomance: IPerfomance) {
