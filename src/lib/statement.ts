@@ -1,13 +1,16 @@
-import { IInvoice, IPerfomance, IPlays } from '../interfaces';
+import { IInvoice, IPerfomance, IPlays, IStatmentData } from '../interfaces';
 
 export function statement(invoice: IInvoice, plays: IPlays) {
-  return renderPlainText(invoice, plays);
+  const statementData: IStatmentData = { customer: '', perfomances: [] };
+  statementData.customer = invoice.customer;
+  statementData.perfomances = invoice.perfomances;
+  return renderPlainText(statementData, plays);
 }
 
-export function renderPlainText(invoice: IInvoice, plays: IPlays) {
-  let result = `Statement for ${invoice.customer}\n`;
+export function renderPlainText(data: IStatmentData, plays: IPlays) {
+  let result = `Statement for ${data.customer}\n`;
 
-  for (const perf of invoice.perfomances) {
+  for (const perf of data.perfomances) {
     result += ` ${playFor(perf).name}: ${usd(amountFor(perf) / 100)}`;
     result += ` (${perf.audience} seats)\n`;
   }
@@ -17,7 +20,7 @@ export function renderPlainText(invoice: IInvoice, plays: IPlays) {
 
   function totalAmount() {
     let result = 0;
-    for (const perf of invoice.perfomances) {
+    for (const perf of data.perfomances) {
       result += amountFor(perf);
     }
     return result;
@@ -26,7 +29,7 @@ export function renderPlainText(invoice: IInvoice, plays: IPlays) {
   function totalVolumeCredit() {
     let result = 0;
 
-    for (const perf of invoice.perfomances) {
+    for (const perf of data.perfomances) {
       result += volumeCreditsFor(perf);
     }
     return result;

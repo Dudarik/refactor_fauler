@@ -16,3 +16,8 @@ export interface IInvoice {
   customer: string;
   perfomances: IPerfomance[];
 }
+
+export interface IStatmentData {
+  customer: string;
+  perfomances: IPerfomance[];
+}
