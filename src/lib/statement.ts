@@ -1,21 +1,32 @@
 import { IInvoice, IPerfomance, IPlays } from '../interfaces';
 
 export function statement(invoice: IInvoice, plays: IPlays) {
-  let totalAmount = 0;
-  let volumeCredits = 0;
-
   let result = `Statement for ${invoice.customer}\n`;
 
   for (const perf of invoice.perfomances) {
-    volumeCredits += volumeCreditsFor(perf);
-
     result += ` ${playFor(perf).name}: ${usd(amountFor(perf) / 100)}`;
     result += ` (${perf.audience} seats)\n`;
-    totalAmount += amountFor(perf);
   }
-  result += `Amount owed is ${usd(totalAmount / 100)}\n`;
-  result += `You erned ${volumeCredits}\n`;
+  result += `Amount owed is ${usd(totalAmount())}\n`;
+  result += `You erned ${totalVolumeCredit()}\n`;
   return result;
+
+  function totalAmount() {
+    let result = 0;
+    for (const perf of invoice.perfomances) {
+      result += amountFor(perf);
+    }
+    return result;
+  }
+
+  function totalVolumeCredit() {
+    let result = 0;
+
+    for (const perf of invoice.perfomances) {
+      result += volumeCreditsFor(perf);
+    }
+    return result;
+  }
 
   function usd(aNumber: number) {
     return new Intl.NumberFormat('en-US', {
