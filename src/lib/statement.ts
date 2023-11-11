@@ -1,6 +1,10 @@
 import { IInvoice, IPerfomance, IPlays } from '../interfaces';
 
 export function statement(invoice: IInvoice, plays: IPlays) {
+  return renderPlainText(invoice, plays);
+}
+
+export function renderPlainText(invoice: IInvoice, plays: IPlays) {
   let result = `Statement for ${invoice.customer}\n`;
 
   for (const perf of invoice.perfomances) {
