@@ -13,10 +13,7 @@ export function statement(invoice: IInvoice, plays: IPlays) {
   }).format;
 
   for (const perf of invoice.perfomances) {
-    volumeCredits += Math.max(perf.audience - 30, 0);
-
-    if ('comedy' === playFor(perf).type)
-      volumeCredits += Math.floor(perf.audience / 5);
+    volumeCredits += volumeCreditsFor(perf);
 
     result += ` ${playFor(perf).name}: ${format(amountFor(perf) / 100)}`;
     result += ` (${perf.audience} seats)\n`;
@@ -25,6 +22,17 @@ export function statement(invoice: IInvoice, plays: IPlays) {
   result += `Amount owed is ${format(totalAmount / 100)}\n`;
   result += `You erned ${volumeCredits}\n`;
   return result;
+
+  function volumeCreditsFor(aPerfomance: IPerfomance) {
+    let volumeCredits = 0;
+
+    volumeCredits += Math.max(aPerfomance.audience - 30, 0);
+
+    if ('comedy' === playFor(aPerfomance).type)
+      volumeCredits += Math.floor(aPerfomance.audience / 5);
+
+    return volumeCredits;
+  }
 
   function amountFor(aPerfomance: IPerfomance) {
     let result = 0;
