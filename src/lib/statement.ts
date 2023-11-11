@@ -1,9 +1,12 @@
 import { IInvoice, IPerfomance, IPlays, IStatmentData } from '../interfaces';
 
+const enrichPerfomance = (aPerfomance: IPerfomance) =>
+  Object.assign({}, aPerfomance);
+
 export function statement(invoice: IInvoice, plays: IPlays) {
   const statementData: IStatmentData = { customer: '', perfomances: [] };
   statementData.customer = invoice.customer;
-  statementData.perfomances = invoice.perfomances;
+  statementData.perfomances = invoice.perfomances.map(enrichPerfomance);
   return renderPlainText(statementData, plays);
 }
 
