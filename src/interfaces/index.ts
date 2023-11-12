@@ -10,6 +10,7 @@ export interface IPlays {
 export interface IPerfomance {
   playID: keyof IPlays;
   audience: number;
+  play: IPlay;
 }
 
 export interface IInvoice {

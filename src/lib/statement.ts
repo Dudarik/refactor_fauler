@@ -1,20 +1,39 @@
-import { IInvoice, IPerfomance, IPlays, IStatmentData } from '../interfaces';
-
-const enrichPerfomance = (aPerfomance: IPerfomance) =>
-  Object.assign({}, aPerfomance);
+import {
+  IInvoice,
+  IPerfomance,
+  IPlay,
+  IPlays,
+  IStatmentData,
+} from '../interfaces';
 
 export function statement(invoice: IInvoice, plays: IPlays) {
   const statementData: IStatmentData = { customer: '', perfomances: [] };
   statementData.customer = invoice.customer;
   statementData.perfomances = invoice.perfomances.map(enrichPerfomance);
-  return renderPlainText(statementData, plays);
+
+  function enrichPerfomance(aPerfomance: IPerfomance) {
+    const result: IPerfomance & { play: IPlay } = Object.assign(
+      {},
+      aPerfomance,
+      { play: { name: '', type: '' } }
+    );
+
+    result.play = playFor(result);
+
+    function playFor(aPerfomance: IPerfomance) {
+      return plays[aPerfomance.playID];
+    }
+    return result;
+  }
+
+  return renderPlainText(statementData);
 }
 
-export function renderPlainText(data: IStatmentData, plays: IPlays) {
+export function renderPlainText(data: IStatmentData) {
   let result = `Statement for ${data.customer}\n`;
 
   for (const perf of data.perfomances) {
-    result += ` ${playFor(perf).name}: ${usd(amountFor(perf) / 100)}`;
+    result += ` ${perf.play.name}: ${usd(amountFor(perf) / 100)}`;
     result += ` (${perf.audience} seats)\n`;
   }
   result += `Amount owed is ${usd(totalAmount())}\n`;
@@ -51,7 +70,7 @@ export function renderPlainText(data: IStatmentData, plays: IPlays) {
 
     volumeCredits += Math.max(aPerfomance.audience - 30, 0);
 
-    if ('comedy' === playFor(aPerfomance).type)
+    if ('comedy' === aPerfomance.play.type)
       volumeCredits += Math.floor(aPerfomance.audience / 5);
 
     return volumeCredits;
@@ -60,7 +79,7 @@ export function renderPlainText(data: IStatmentData, plays: IPlays) {
   function amountFor(aPerfomance: IPerfomance) {
     let result = 0;
 
-    switch (playFor(aPerfomance).type) {
+    switch (aPerfomance.play.type) {
       case 'tragedy':
         result = 40000;
 
@@ -80,13 +99,9 @@ export function renderPlainText(data: IStatmentData, plays: IPlays) {
         break;
 
       default:
-        throw new Error(`Uncnown type: ${playFor(aPerfomance).type}`);
+        throw new Error(`Uncnown type: ${aPerfomance.play.type}`);
     }
 
     return result;
-  }
-
-  function playFor(aPerfomance: IPerfomance) {
-    return plays[aPerfomance.playID];
   }
 }
