@@ -11,38 +11,38 @@ export function statement(invoice: IInvoice, plays: IPlays) {
     result.play = playFor(result);
     result.amount = amountFor(result);
 
-    function playFor(aPerfomance: IPerfomance) {
-      return plays[aPerfomance.playID];
+    return result;
+  }
+  function playFor(aPerfomance: IPerfomance) {
+    return plays[aPerfomance.playID];
+  }
+
+  function amountFor(aPerfomance: IPerfomance) {
+    let result = 0;
+
+    switch (aPerfomance.play.type) {
+      case 'tragedy':
+        result = 40000;
+
+        if (aPerfomance.audience > 30)
+          result += 1000 * (aPerfomance.audience - 30);
+
+        break;
+
+      case 'comedy':
+        result = 30000;
+
+        if (aPerfomance.audience > 20)
+          result += 10000 + 500 * (aPerfomance.audience - 20);
+
+        result += 300 * aPerfomance.audience;
+
+        break;
+
+      default:
+        throw new Error(`Uncnown type: ${aPerfomance.play.type}`);
     }
 
-    function amountFor(aPerfomance: IPerfomance) {
-      let result = 0;
-
-      switch (aPerfomance.play.type) {
-        case 'tragedy':
-          result = 40000;
-
-          if (aPerfomance.audience > 30)
-            result += 1000 * (aPerfomance.audience - 30);
-
-          break;
-
-        case 'comedy':
-          result = 30000;
-
-          if (aPerfomance.audience > 20)
-            result += 10000 + 500 * (aPerfomance.audience - 20);
-
-          result += 300 * aPerfomance.audience;
-
-          break;
-
-        default:
-          throw new Error(`Uncnown type: ${aPerfomance.play.type}`);
-      }
-
-      return result;
-    }
     return result;
   }
 
