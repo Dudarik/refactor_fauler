@@ -11,6 +11,7 @@ export interface IPerfomance {
   playID: keyof IPlays;
   audience: number;
   play: IPlay;
+  amount: number;
 }
 
 export interface IInvoice {
