@@ -12,6 +12,7 @@ export interface IPerfomance {
   audience: number;
   play: IPlay;
   amount: number;
+  volumeCredits: number;
 }
 
 export interface IInvoice {

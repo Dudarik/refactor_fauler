@@ -10,6 +10,7 @@ export function statement(invoice: IInvoice, plays: IPlays) {
 
     result.play = playFor(result);
     result.amount = amountFor(result);
+    result.volumeCredits = volumeCreditsFor(result);
 
     return result;
   }
@@ -46,6 +47,17 @@ export function statement(invoice: IInvoice, plays: IPlays) {
     return result;
   }
 
+  function volumeCreditsFor(aPerfomance: IPerfomance) {
+    let volumeCredits = 0;
+
+    volumeCredits += Math.max(aPerfomance.audience - 30, 0);
+
+    if ('comedy' === aPerfomance.play.type)
+      volumeCredits += Math.floor(aPerfomance.audience / 5);
+
+    return volumeCredits;
+  }
+
   return renderPlainText(statementData);
 }
 
@@ -72,7 +84,7 @@ export function renderPlainText(data: IStatmentData) {
     let result = 0;
 
     for (const perf of data.perfomances) {
-      result += volumeCreditsFor(perf);
+      result += perf.volumeCredits;
     }
     return result;
   }
@@ -83,16 +95,5 @@ export function renderPlainText(data: IStatmentData) {
       currency: 'USD',
       minimumFractionDigits: 2,
     }).format(aNumber / 100);
-  }
-
-  function volumeCreditsFor(aPerfomance: IPerfomance) {
-    let volumeCredits = 0;
-
-    volumeCredits += Math.max(aPerfomance.audience - 30, 0);
-
-    if ('comedy' === aPerfomance.play.type)
-      volumeCredits += Math.floor(aPerfomance.audience / 5);
-
-    return volumeCredits;
   }
 }
