@@ -23,4 +23,6 @@ export interface IInvoice {
 export interface IStatmentData {
   customer: string;
   perfomances: IPerfomance[];
+  totalAmount: number;
+  totalVolumeCredit: number;
 }

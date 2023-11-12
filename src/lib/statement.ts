@@ -1,9 +1,16 @@
 import { IInvoice, IPerfomance, IPlays, IStatmentData } from '../interfaces';
 
 export function statement(invoice: IInvoice, plays: IPlays) {
-  const statementData: IStatmentData = { customer: '', perfomances: [] };
+  const statementData: IStatmentData = {
+    customer: '',
+    perfomances: [],
+    totalAmount: 0,
+    totalVolumeCredit: 0,
+  };
   statementData.customer = invoice.customer;
   statementData.perfomances = invoice.perfomances.map(enrichPerfomance);
+  statementData.totalAmount = totalAmount(statementData);
+  statementData.totalVolumeCredit = totalVolumeCredit(statementData);
 
   function enrichPerfomance(aPerfomance: IPerfomance) {
     const result: IPerfomance = Object.assign({}, aPerfomance);
@@ -58,6 +65,23 @@ export function statement(invoice: IInvoice, plays: IPlays) {
     return volumeCredits;
   }
 
+  function totalAmount(data: IStatmentData) {
+    let result = 0;
+    for (const perf of data.perfomances) {
+      result += perf.amount;
+    }
+    return result;
+  }
+
+  function totalVolumeCredit(data: IStatmentData) {
+    let result = 0;
+
+    for (const perf of data.perfomances) {
+      result += perf.volumeCredits;
+    }
+    return result;
+  }
+
   return renderPlainText(statementData);
 }
 
@@ -68,26 +92,9 @@ export function renderPlainText(data: IStatmentData) {
     result += ` ${perf.play.name}: ${usd(perf.amount / 100)}`;
     result += ` (${perf.audience} seats)\n`;
   }
-  result += `Amount owed is ${usd(totalAmount())}\n`;
-  result += `You erned ${totalVolumeCredit()}\n`;
+  result += `Amount owed is ${usd(data.totalAmount)}\n`;
+  result += `You erned ${data.totalVolumeCredit}\n`;
   return result;
-
-  function totalAmount() {
-    let result = 0;
-    for (const perf of data.perfomances) {
-      result += perf.amount;
-    }
-    return result;
-  }
-
-  function totalVolumeCredit() {
-    let result = 0;
-
-    for (const perf of data.perfomances) {
-      result += perf.volumeCredits;
-    }
-    return result;
-  }
 
   function usd(aNumber: number) {
     return new Intl.NumberFormat('en-US', {
