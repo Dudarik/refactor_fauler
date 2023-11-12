@@ -1,5 +1,5 @@
 import { IInvoice, IPlays, IStatmentData } from '../interfaces';
-import { createStatmentData } from '.';
+import { createStatmentData, usd } from '.';
 
 export function statement(invoice: IInvoice, plays: IPlays) {
   return renderPlainText(createStatmentData(invoice, plays));
@@ -15,12 +15,4 @@ export function renderPlainText(data: IStatmentData) {
   result += `Amount owed is ${usd(data.totalAmount)}\n`;
   result += `You erned ${data.totalVolumeCredit}\n`;
   return result;
-
-  function usd(aNumber: number) {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-    }).format(aNumber / 100);
-  }
 }
