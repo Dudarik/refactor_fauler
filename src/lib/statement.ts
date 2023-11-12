@@ -66,20 +66,11 @@ export function statement(invoice: IInvoice, plays: IPlays) {
   }
 
   function totalAmount(data: IStatmentData) {
-    let result = 0;
-    for (const perf of data.perfomances) {
-      result += perf.amount;
-    }
-    return result;
+    return data.perfomances.reduce((total, p) => total + p.amount, 0);
   }
 
   function totalVolumeCredit(data: IStatmentData) {
-    let result = 0;
-
-    for (const perf of data.perfomances) {
-      result += perf.volumeCredits;
-    }
-    return result;
+    return data.perfomances.reduce((total, p) => total + p.volumeCredits, 0);
   }
 
   return renderPlainText(statementData);
