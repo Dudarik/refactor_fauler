@@ -12,3 +12,20 @@ export function renderPlainText(data: IStatmentData) {
   result += `You erned ${data.totalVolumeCredit}\n`;
   return result;
 }
+
+export function renderHtml(data: IStatmentData) {
+  let result = `<h1>Statement for ${data.customer}</h1>\n`;
+  result += `<table>`;
+  result += `<tr><th>Play</th><th>cost</th></tr>`;
+
+  for (const perf of data.perfomances) {
+    result += `<tr><td>${perf.play.name}</td>`;
+    result += `<td>${perf.audience} seats)</td>`;
+    result += `<td>${usd(perf.amount / 100)}</td></tr>`;
+  }
+  result += `</table>`;
+
+  result += `<p>Amount owed is <em>${usd(data.totalAmount)}</em></p>`;
+  result += `<p>You erned <em>${data.totalVolumeCredit}</em> credits</p>`;
+  return result;
+}

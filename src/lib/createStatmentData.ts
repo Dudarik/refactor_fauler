@@ -1,4 +1,10 @@
-import { IInvoice, IPerfomance, IPlays, IStatmentData } from '../interfaces';
+import {
+  IInvoice,
+  IPerfomance,
+  IPlays,
+  IRenderPerfomance,
+  IStatmentData,
+} from '../interfaces';
 
 export function createStatmentData(invoice: IInvoice, plays: IPlays) {
   const statementData: IStatmentData = {
@@ -15,7 +21,11 @@ export function createStatmentData(invoice: IInvoice, plays: IPlays) {
   return statementData;
 
   function enrichPerfomance(aPerfomance: IPerfomance) {
-    const result: IPerfomance = Object.assign({}, aPerfomance);
+    const result: IRenderPerfomance = Object.assign({}, aPerfomance, {
+      play: { name: '', type: '' },
+      amount: 0,
+      volumeCredits: 0,
+    });
 
     result.play = playFor(result);
     result.amount = amountFor(result);
@@ -23,11 +33,11 @@ export function createStatmentData(invoice: IInvoice, plays: IPlays) {
 
     return result;
   }
-  function playFor(aPerfomance: IPerfomance) {
+  function playFor(aPerfomance: IRenderPerfomance) {
     return plays[aPerfomance.playID];
   }
 
-  function amountFor(aPerfomance: IPerfomance) {
+  function amountFor(aPerfomance: IRenderPerfomance) {
     let result = 0;
 
     switch (aPerfomance.play.type) {
@@ -56,7 +66,7 @@ export function createStatmentData(invoice: IInvoice, plays: IPlays) {
     return result;
   }
 
-  function volumeCreditsFor(aPerfomance: IPerfomance) {
+  function volumeCreditsFor(aPerfomance: IRenderPerfomance) {
     let volumeCredits = 0;
 
     volumeCredits += Math.max(aPerfomance.audience - 30, 0);

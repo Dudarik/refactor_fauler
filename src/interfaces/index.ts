@@ -10,9 +10,6 @@ export interface IPlays {
 export interface IPerfomance {
   playID: keyof IPlays;
   audience: number;
-  play: IPlay;
-  amount: number;
-  volumeCredits: number;
 }
 
 export interface IInvoice {
@@ -22,7 +19,13 @@ export interface IInvoice {
 
 export interface IStatmentData {
   customer: string;
-  perfomances: IPerfomance[];
+  perfomances: IRenderPerfomance[];
   totalAmount: number;
   totalVolumeCredit: number;
+}
+
+export interface IRenderPerfomance extends IPerfomance {
+  play: IPlay;
+  amount: number;
+  volumeCredits: number;
 }
