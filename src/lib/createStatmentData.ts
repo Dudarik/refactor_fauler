@@ -33,23 +33,12 @@ export function createStatmentData(invoice: IInvoice, plays: IPlays) {
 
     result.play = calculator.play;
     result.amount = calculator.amount;
-    result.volumeCredits = volumeCreditsFor(result);
+    result.volumeCredits = calculator.voulumeCredits;
 
     return result;
   }
   function playFor(aPerfomance: IRenderPerfomance) {
     return plays[aPerfomance.playID];
-  }
-
-  function volumeCreditsFor(aPerfomance: IRenderPerfomance) {
-    let volumeCredits = 0;
-
-    volumeCredits += Math.max(aPerfomance.audience - 30, 0);
-
-    if ('comedy' === aPerfomance.play.type)
-      volumeCredits += Math.floor(aPerfomance.audience / 5);
-
-    return volumeCredits;
   }
 
   function totalAmount(data: IStatmentData) {
@@ -94,5 +83,16 @@ export class PerfomanceCalculator {
     }
 
     return result;
+  }
+
+  get voulumeCredits() {
+    let volumeCredits = 0;
+
+    volumeCredits += Math.max(this.aPerfomance.audience - 30, 0);
+
+    if ('comedy' === this.play.type)
+      volumeCredits += Math.floor(this.aPerfomance.audience / 5);
+
+    return volumeCredits;
   }
 }
