@@ -29,7 +29,7 @@ export function createStatmentData(invoice: IInvoice, plays: IPlays) {
       volumeCredits: 0,
     });
 
-    const calculator = new PerfomanceCalculator(aPerfomance, playFor(result));
+    const calculator = createPerfomanceCalculator(aPerfomance, playFor(result));
 
     result.play = calculator.play;
     result.amount = calculator.amount;
@@ -50,40 +50,26 @@ export function createStatmentData(invoice: IInvoice, plays: IPlays) {
   }
 }
 
+function createPerfomanceCalculator(
+  aPerfomance: IPerfomance | IRenderPerfomance,
+  aPlay: IPlay
+) {
+  switch (aPlay.type) {
+    case 'tragedy':
+      return new TragedyCalculator(aPerfomance, aPlay);
+    case 'comedy':
+      return new ComedyCalculator(aPerfomance, aPlay);
+
+    default:
+      throw new Error(`Uncnown type: ${aPlay.type}`);
+  }
+}
+
 export class PerfomanceCalculator {
   constructor(
     public aPerfomance: IPerfomance | IRenderPerfomance,
     public play: IPlay
   ) {}
-
-  get amount() {
-    let result = 0;
-
-    switch (this.play.type) {
-      case 'tragedy':
-        result = 40000;
-
-        if (this.aPerfomance.audience > 30)
-          result += 1000 * (this.aPerfomance.audience - 30);
-
-        break;
-
-      case 'comedy':
-        result = 30000;
-
-        if (this.aPerfomance.audience > 20)
-          result += 10000 + 500 * (this.aPerfomance.audience - 20);
-
-        result += 300 * this.aPerfomance.audience;
-
-        break;
-
-      default:
-        throw new Error(`Uncnown type: ${this.play.type}`);
-    }
-
-    return result;
-  }
 
   get voulumeCredits() {
     let volumeCredits = 0;
@@ -94,5 +80,26 @@ export class PerfomanceCalculator {
       volumeCredits += Math.floor(this.aPerfomance.audience / 5);
 
     return volumeCredits;
+  }
+}
+
+class TragedyCalculator extends PerfomanceCalculator {
+  get amount() {
+    let result = 40000;
+
+    if (this.aPerfomance.audience > 30)
+      result += 1000 * (this.aPerfomance.audience - 30);
+    return result;
+  }
+}
+class ComedyCalculator extends PerfomanceCalculator {
+  get amount() {
+    let result = 30000;
+
+    if (this.aPerfomance.audience > 20)
+      result += 10000 + 500 * (this.aPerfomance.audience - 20);
+
+    result += 300 * this.aPerfomance.audience;
+    return result;
   }
 }
