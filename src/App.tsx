@@ -14,7 +14,7 @@ function App() {
       {JSON.stringify(invoices)}
       <ul>
         {Object.entries(palys).map((item) => (
-          <li>
+          <li key={item[0]}>
             {JSON.stringify(item[0])} |||| {JSON.stringify(item[1])}
           </li>
         ))}

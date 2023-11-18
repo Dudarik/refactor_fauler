@@ -1,11 +1,11 @@
 import {
   IInvoice,
   IPerfomance,
-  IPlay,
   IPlays,
   IRenderPerfomance,
   IStatmentData,
 } from '../interfaces';
+import { createPerfomanceCalculator } from './PerfomanceCalculator';
 
 export function createStatmentData(invoice: IInvoice, plays: IPlays) {
   const statementData: IStatmentData = {
@@ -47,60 +47,5 @@ export function createStatmentData(invoice: IInvoice, plays: IPlays) {
 
   function totalVolumeCredit(data: IStatmentData) {
     return data.perfomances.reduce((total, p) => total + p.volumeCredits, 0);
-  }
-}
-
-function createPerfomanceCalculator(
-  aPerfomance: IPerfomance | IRenderPerfomance,
-  aPlay: IPlay
-) {
-  switch (aPlay.type) {
-    case 'tragedy':
-      return new TragedyCalculator(aPerfomance, aPlay);
-    case 'comedy':
-      return new ComedyCalculator(aPerfomance, aPlay);
-
-    default:
-      throw new Error(`Uncnown type: ${aPlay.type}`);
-  }
-}
-
-export class PerfomanceCalculator {
-  constructor(
-    public aPerfomance: IPerfomance | IRenderPerfomance,
-    public play: IPlay
-  ) {}
-
-  get voulumeCredits() {
-    let volumeCredits = 0;
-
-    volumeCredits += Math.max(this.aPerfomance.audience - 30, 0);
-
-    return volumeCredits;
-  }
-}
-
-class TragedyCalculator extends PerfomanceCalculator {
-  get amount() {
-    let result = 40000;
-
-    if (this.aPerfomance.audience > 30)
-      result += 1000 * (this.aPerfomance.audience - 30);
-    return result;
-  }
-
-  get voulumeCredits() {
-    return Math.floor(this.aPerfomance.audience / 5);
-  }
-}
-class ComedyCalculator extends PerfomanceCalculator {
-  get amount() {
-    let result = 30000;
-
-    if (this.aPerfomance.audience > 20)
-      result += 10000 + 500 * (this.aPerfomance.audience - 20);
-
-    result += 300 * this.aPerfomance.audience;
-    return result;
   }
 }
