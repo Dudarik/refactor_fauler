@@ -13,6 +13,6 @@ export function createPerfomanceCalculator(
       return new ComedyCalculator(aPerfomance, aPlay);
 
     default:
-      throw new Error(`Uncnown type: ${aPlay.type}`);
+      throw new Error(`Unknown type: ${aPlay.type}`);
   }
 }
