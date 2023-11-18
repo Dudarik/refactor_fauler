@@ -76,9 +76,6 @@ export class PerfomanceCalculator {
 
     volumeCredits += Math.max(this.aPerfomance.audience - 30, 0);
 
-    if ('comedy' === this.play.type)
-      volumeCredits += Math.floor(this.aPerfomance.audience / 5);
-
     return volumeCredits;
   }
 }
@@ -90,6 +87,10 @@ class TragedyCalculator extends PerfomanceCalculator {
     if (this.aPerfomance.audience > 30)
       result += 1000 * (this.aPerfomance.audience - 30);
     return result;
+  }
+
+  get voulumeCredits() {
+    return Math.floor(this.aPerfomance.audience / 5);
   }
 }
 class ComedyCalculator extends PerfomanceCalculator {
